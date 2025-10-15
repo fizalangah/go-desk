@@ -12,16 +12,19 @@ export default function TargetPage() {
     const socket = getSocket();
     socket.emit("identify", myId);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     socket.on("connection-request", (p: any) => {
       setIncoming(p);
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     socket.on("answer", async (p: any) => {
       if (pcRef.current) {
         await pcRef.current.setRemoteDescription(new RTCSessionDescription(p.sdp));
       }
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     socket.on("ice-candidate", async (p: any) => {
       try { await pcRef.current?.addIceCandidate(p.candidate); } catch {}
     });
@@ -31,13 +34,14 @@ export default function TargetPage() {
 
   async function acceptRequest(fromId: string) {
     const socket = getSocket();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const stream = await (navigator.mediaDevices as any).getDisplayMedia({ video: true, audio: false });
     if (videoRef.current) videoRef.current.srcObject = stream;
 
     const pc = new RTCPeerConnection({ iceServers: [] });
     pcRef.current = pc;
 
-    stream.getTracks().forEach(t => pc.addTrack(t, stream));
+    stream.getTracks().forEach((t: MediaStreamTrack) => pc.addTrack(t, stream));
 
     // create data channel handler for incoming inputs (viewer might create channel)
     pc.ondatachannel = (e) => {
@@ -59,6 +63,7 @@ export default function TargetPage() {
     setIncoming(null);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function handleRemoteEvent(evt: any) {
     // For browser-only: you can replay events in page DOM (not OS-wide)
     if (evt.type === "click") {
