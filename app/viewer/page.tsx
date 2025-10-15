@@ -13,8 +13,10 @@ export default function ViewerPage() {
     const socket = getSocket();
     socket.emit("identify", myId);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     socket.on("request-error", (e: any) => alert(e.message));
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     socket.on("offer", async (p: any) => {
       if (!pcRef.current) {
         pcRef.current = createPeerConnection(socket, p.fromId);
@@ -26,6 +28,7 @@ export default function ViewerPage() {
       socket.emit("answer", { fromId: myId, toId: p.fromId, sdp: pc.localDescription });
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     socket.on("ice-candidate", async (p: any) => {
       try { await pcRef.current?.addIceCandidate(p.candidate); } catch {}
     });
@@ -33,6 +36,7 @@ export default function ViewerPage() {
     return () => { socket.off("offer"); socket.off("ice-candidate"); };
   }, [myId]);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function createPeerConnection(socket: any, remoteId: string) {
     const pc = new RTCPeerConnection({
       iceServers: [
